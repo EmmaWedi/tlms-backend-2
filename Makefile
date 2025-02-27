@@ -5,7 +5,8 @@ deps:
 	cargo add actix-web actix-web-lab actix-http chrono futures-util futures actix-cors jsonwebtoken config regex rand reqwest anyhow env_logger log serde_json sha2 md5 cbc base64 dotenvy validator && \
 	cargo add uuid --features "v4 fast-rng macro-diagnostics" && \
 	cargo add serde --features "derive" && \
-	cargo add sea-orm --features "sqlx-postgres runtime-tokio-rustls macros"
+	cargo add sea-orm --features "sqlx-postgres runtime-tokio-rustls macros" && \
+	cargo add tokio --features "full"
 
 dev-start:
 	podman-compose -f docker-compose.yaml up -d

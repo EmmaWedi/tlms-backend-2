@@ -4,7 +4,7 @@ use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use serde_json::json;
 
 use crate::{
-    app::members::{dto::dtos::{get_member_by_phone, save_member}, models::model::{AddMemberDto, AddMemberModel}},
+    app::members::{dto::dtos::{get_all_members, get_member_by_phone, save_member}, models::model::{AddMemberDto, AddMemberModel}},
     libs::{error, jwt::Claims, validator},
     utils::models::HttpClientResponse,
     AppState,
@@ -79,5 +79,24 @@ pub async fn add_member(
             message: format!("Failed to Add Member: {}", err),
             data: json!({}),
         })),
+    }
+}
+
+pub async fn get_all(_req: HttpRequest, state: web::Data<AppState>) -> Result<HttpResponse, error::Error> {
+    let members = get_all_members(&state).await;
+
+    match members {
+        Ok(res) => Ok(HttpResponse::Ok().json(HttpClientResponse {
+            code: 2000,
+            status: true,
+            message: "Members Retrieved Successfully".to_string(),
+            data: json!(res)
+        })),
+        Err(e) => Ok(HttpResponse::InternalServerError().json(HttpClientResponse {
+            code: 2001,
+            status: false,
+            message: format!("Error Retrieving Members: {}", e),
+            data: json!({})
+        }))
     }
 }

@@ -20,3 +20,14 @@ pub struct SaveMemberOrgDto {
     pub gender: String,
     pub date_joined: Option<chrono::NaiveDate>,
 }
+
+pub struct SaveMediaDto {
+    pub file_name: String,
+    pub mime_type: String,
+    pub file_path: String,
+    pub file_size: i64,
+    pub media_type: String,
+    pub width: Option<i32>,
+    pub height: Option<i32>,
+    pub duration: Option<i32>,
+}

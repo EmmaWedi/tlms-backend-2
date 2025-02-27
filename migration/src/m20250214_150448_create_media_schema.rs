@@ -28,6 +28,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Media::Height).integer())
                     .col(ColumnDef::new(Media::Duration).integer())
                     .col(
+                        ColumnDef::new(Media::IsDeleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .col(
                         ColumnDef::new(Media::CreatedAt)
                             .timestamp_with_time_zone()
                             .not_null()
@@ -64,6 +70,7 @@ enum Media {
     Width,
     Height,
     Duration,
+    IsDeleted,
     CreatedAt,
-    UpdatedAt
+    UpdatedAt,
 }

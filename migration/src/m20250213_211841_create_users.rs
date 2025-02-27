@@ -26,6 +26,7 @@ impl MigrationTrait for Migration {
                             .check(Expr::col(Users::Email).like("%_@_%.__%")),
                     )
                     .col(ColumnDef::new(Users::MemberId).uuid().not_null())
+                    .col(ColumnDef::new(Users::SessionId).uuid())
                     .col(
                         ColumnDef::new(Users::Contact)
                         .string()
@@ -80,6 +81,7 @@ pub enum Users {
     Role,
     IsPasswordChanged,
     MemberId,
+    SessionId,
     CreatedAt,
     UpdatedAt,
 }

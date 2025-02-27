@@ -3,7 +3,10 @@ use sea_orm::{ColumnTrait, Condition, DbErr, EntityTrait, InsertResult, QueryFil
 
 use crate::AppState;
 
-use super::models::SaveMemberOrgDto;
+use super::{
+    file_methods::file_exists,
+    models::{SaveMediaDto, SaveMemberOrgDto},
+};
 
 pub async fn save_member_from_org(
     id: uuid::Uuid,
@@ -46,3 +49,40 @@ pub async fn save_member_from_org(
 
     Ok(insertion)
 }
+
+pub async fn save_media_meta(
+    owner: uuid::Uuid,
+    data: SaveMediaDto,
+    state: &web::Data<AppState>,
+) -> Result<InsertResult<entity::media::ActiveModel>, DbErr> {
+    if !file_exists(&data.file_path).await {
+        return Err(DbErr::Custom("File does not exist".to_string()));
+    };
+
+    let media_data = entity::media::ActiveModel {
+        owner_id: Set(owner),
+        file_path: Set(Some(data.file_path)),
+        mime_type: Set(Some(data.mime_type)),
+        file_size: Set(Some(data.file_size)),
+        file_name: Set(Some(data.file_name)),
+        media_type: Set(Some(data.media_type)),
+        width: Set(data.width),
+        height: Set(data.height),
+        duration: Set(data.duration),
+        ..Default::default()
+    };
+
+    let insertion = entity::media::Entity::insert(media_data)
+        .exec(state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database retrieval error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(insertion)
+}
+
+//get media by id
+
+//get media by user

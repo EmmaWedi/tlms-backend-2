@@ -18,6 +18,7 @@ mod libs;
 mod setup;
 mod utils;
 mod middlewares;
+mod files_manager;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -86,6 +87,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(NormalizePath::trim())
             .wrap(cors)
             .configure(|cfg| app::organization::routes::route::all_routes(cfg, state.clone()))
+            .configure(|cfg| app::members::routes::route::all_routes(cfg, state.clone()))
             .configure(app::health::routes::route::route)
     })
     .bind(format!("{}:{}", _host, _port))?
