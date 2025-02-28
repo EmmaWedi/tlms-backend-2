@@ -89,6 +89,7 @@ async fn main() -> std::io::Result<()> {
             .configure(|cfg| app::organization::routes::route::all_routes(cfg, state.clone()))
             .configure(|cfg| app::members::routes::route::all_routes(cfg, state.clone()))
             .configure(app::health::routes::route::route)
+            .configure(files_manager::file_api::routes)
     })
     .bind(format!("{}:{}", _host, _port))?
     .run()

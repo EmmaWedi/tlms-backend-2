@@ -5,7 +5,7 @@ use serde_json::json;
 
 use crate::{
     app::members::{dto::dtos::{get_all_members, get_member_by_phone, save_member}, models::model::{AddMemberDto, AddMemberModel}},
-    libs::{error, jwt::Claims, validator},
+    libs::{error, jwt::Claims, pword::parse_uuid, validator},
     utils::models::HttpClientResponse,
     AppState,
 };
@@ -42,7 +42,7 @@ pub async fn add_member(
     //     }));
     // }
 
-    let organization_id = uuid::Uuid::parse_str(&claims.unwrap()._id).map_err(|_| "Failed to Parse UUID".to_string());
+    let organization_id = parse_uuid(&claims.unwrap()._id);
 
     if let Ok(Some(_)) = get_member_by_phone(&mobile, &state).await {
         return Ok(HttpResponse::Forbidden().json(HttpClientResponse {
@@ -58,7 +58,7 @@ pub async fn add_member(
         last_name,
         email: Some(email),
         phone: mobile,
-        organization_id: organization_id.unwrap(),
+        organization_id: organization_id,
         gender,
         address,
         date_joined: Some(date_joined)

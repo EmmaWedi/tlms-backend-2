@@ -4,8 +4,8 @@ pub fn salt() -> uuid::Uuid {
     uuid::Uuid::new_v4()
 }
 
-pub fn parse_uuid(salt: &str) -> uuid::Uuid {
-    uuid::Uuid::parse_str(salt).expect("Invalid UUID string")
+pub fn parse_uuid(id: &str) -> uuid::Uuid {
+    uuid::Uuid::parse_str(id).expect("Invalid UUID string")
 }
 
 pub fn encrypt_password(password: &str, _salt: &uuid::Uuid) -> String {
