@@ -58,7 +58,7 @@ pub async fn add_member(
         last_name,
         email: Some(email),
         phone: mobile,
-        organization_id: organization_id,
+        organization_id,
         gender,
         address,
         date_joined: Some(date_joined)

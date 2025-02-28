@@ -107,7 +107,10 @@ pub async fn get_media_by_user(
     state: &web::Data<AppState>,
 ) -> Result<Vec<entity::media::Model>, DbErr> {
     let medias = entity::media::Entity::find()
-        .filter(Condition::all().add(entity::media::Column::OwnerId.eq(owner)))
+        .filter(
+            Condition::all()
+            .add(entity::media::Column::OwnerId.eq(owner))
+        )
         .all(state.pg_db.get_ref())
         .await
         .map_err(|err| {
