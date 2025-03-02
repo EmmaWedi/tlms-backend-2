@@ -53,22 +53,19 @@ pub async fn get_all_members(
 pub async fn get_member_by_id(
     id: uuid::Uuid,
     state: &web::Data<AppState>,
-) -> Result<Option<entity::members::Model>, DbErr> {
+) -> Result<entity::members::Model, DbErr> {
     let member = entity::members::Entity::find_by_id(id)
         .one(state.pg_db.get_ref())
-        .await
-        .map_err(|err| {
-            eprintln!("Database retrieval error: {}", err);
-            DbErr::Custom(err.to_string())
-        })?;
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(member)
+    Ok(member.unwrap())
 }
 
 pub async fn get_member_by_phone(
     phone: &String,
     state: &web::Data<AppState>,
-) -> Result<Option<entity::members::Model>, DbErr> {
+) -> Result<entity::members::Model, DbErr> {
     let member = entity::members::Entity::find()
         .filter(
             Condition::all()
@@ -76,13 +73,10 @@ pub async fn get_member_by_phone(
                 .add(entity::members::Column::IsBlocked.eq(false)),
         )
         .one(state.pg_db.get_ref())
-        .await
-        .map_err(|err| {
-            eprintln!("Database retrieval error: {}", err);
-            DbErr::Custom(err.to_string())
-        })?;
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(member)
+    Ok(member.unwrap())
 }
 
 pub async fn toggle_member_blocked(

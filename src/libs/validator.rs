@@ -48,7 +48,7 @@ pub fn mobile(v: &str, name: &str) -> Result<String, error::Error> {
     Ok(res_str)
 }
 
-pub fn uuid(v: &str, name: &str) -> Result<String, error::Error> {
+pub fn uuid(v: &str, name: &str) -> Result<uuid::Uuid, error::Error> {
 
     let re = Regex::new(r"^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$").unwrap();
     
@@ -56,7 +56,7 @@ pub fn uuid(v: &str, name: &str) -> Result<String, error::Error> {
         return Err(error::new_error(1002, &format!("{} is invalid", name)[..], 422));
     }
 
-    let res_str = v.to_string();
+    let res_str = uuid::Uuid::parse_str(v).map_err(|_| error::new_error(1002, &format!("{} is not a valid UUID", name), 422))?;
 
     Ok(res_str)
 }

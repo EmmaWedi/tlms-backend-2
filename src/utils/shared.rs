@@ -89,16 +89,13 @@ pub async fn save_media_meta(
 pub async fn get_media_by_id(
     id: uuid::Uuid,
     state: &web::Data<AppState>,
-) -> Result<Option<entity::media::Model>, DbErr> {
+) -> Result<entity::media::Model, DbErr> {
     let media = entity::media::Entity::find_by_id(id)
         .one(state.pg_db.get_ref())
-        .await
-        .map_err(|err| {
-            eprintln!("Database retrieval error: {}", err);
-            DbErr::Custom(err.to_string())
-        })?;
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(media)
+    Ok(media.unwrap())
 }
 
 //get media by user

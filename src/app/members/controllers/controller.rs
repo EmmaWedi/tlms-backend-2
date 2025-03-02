@@ -44,7 +44,7 @@ pub async fn add_member(
 
     let organization_id = parse_uuid(&claims.unwrap()._id);
 
-    if let Ok(Some(_)) = get_member_by_phone(&mobile, &state).await {
+    if let Ok(_) = get_member_by_phone(&mobile, &state).await {
         return Ok(HttpResponse::Forbidden().json(HttpClientResponse {
             code: 2001,
             status: false,

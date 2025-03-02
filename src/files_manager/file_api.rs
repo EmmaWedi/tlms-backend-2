@@ -1,4 +1,4 @@
-use actix_web::{web, HttpResponse};
+use actix_web::{web, HttpRequest, HttpResponse};
 
 use crate::{
     libs::{error, pword::parse_uuid},
@@ -10,6 +10,7 @@ use crate::{
 };
 
 async fn req_read_file(
+    _req: HttpRequest,
     id: web::Path<String>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
@@ -18,7 +19,7 @@ async fn req_read_file(
     let media = get_media_by_id(parsed_id, &state).await;
 
     match media {
-        Ok(Some(m)) => {
+        Ok(m) => {
             let file_name = m.file_name.unwrap();
             let mime_type = m.mime_type.unwrap();
             let extension = mime_type.split('/').nth(1);
@@ -36,5 +37,8 @@ async fn req_read_file(
 }
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("api/v1/media/{id}").route(web::get().to(req_read_file)));
+    cfg.service(
+        web::resource("api/v1/media/{id}")
+        .route(web::get().to(req_read_file))
+    );
 }

@@ -48,24 +48,21 @@ pub async fn get_organizations(
 
 pub async fn get_organization_by_id(
     id: uuid::Uuid,
-    state: web::Data<AppState>,
-) -> Result<Option<entity::organization::Model>, DbErr> {
+    state: &web::Data<AppState>,
+) -> Result<entity::organization::Model, DbErr> {
     let organization = entity::organization::Entity::find_by_id(id)
         .filter(entity::organization::Column::IsBlocked.eq(false))
         .one(state.pg_db.get_ref())
-        .await
-        .map_err(|err| {
-            eprintln!("Database retrieval error: {}", err);
-            DbErr::Custom(err.to_string())
-        })?;
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(organization)
+    Ok(organization.unwrap())
 }
 
 pub async fn get_organization_by_email(
     email: &String,
     state: &web::Data<AppState>,
-) -> Result<Option<entity::organization::Model>, DbErr> {
+) -> Result<entity::organization::Model, DbErr> {
     let organization = entity::organization::Entity::find()
         .filter(
             Condition::all()
@@ -73,19 +70,16 @@ pub async fn get_organization_by_email(
                 .add(entity::organization::Column::IsBlocked.eq(false)),
         )
         .one(state.pg_db.get_ref())
-        .await
-        .map_err(|err| {
-            eprintln!("Database retrieval error: {}", err);
-            DbErr::Custom(err.to_string())
-        })?;
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(organization)
+    Ok(organization.unwrap())
 }
 
 pub async fn get_organization_by_phone(
     phone: &String,
     state: &web::Data<AppState>,
-) -> Result<Option<entity::organization::Model>, DbErr> {
+) -> Result<entity::organization::Model, DbErr> {
     let organization = entity::organization::Entity::find()
         .filter(
             Condition::all()
@@ -93,13 +87,10 @@ pub async fn get_organization_by_phone(
                 .add(entity::organization::Column::IsBlocked.eq(false)),
         )
         .one(state.pg_db.get_ref())
-        .await
-        .map_err(|err| {
-            eprintln!("Database retrieval error: {}", err);
-            DbErr::Custom(err.to_string())
-        })?;
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(organization)
+    Ok(organization.unwrap())
 }
 
 pub async fn update_organization(

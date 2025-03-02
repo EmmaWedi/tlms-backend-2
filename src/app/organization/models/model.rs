@@ -36,3 +36,9 @@ pub struct CreatedResponseModel {
     pub organization: String,
     pub member: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UploadImgModel {
+    pub id: String,
+    pub data: String,
+}

@@ -1,15 +1,21 @@
 use actix_web::{web, HttpRequest, HttpResponse};
+use base64::{engine::general_purpose, Engine as _};
 use serde_json::json;
 
 use crate::{
     app::organization::{
-        dto::dtos::{get_organization_by_phone, get_organizations, save_organization},
-        models::model::{AddOrganizationDto, AddOrganizationModel, CreatedResponseModel},
+        dto::dtos::{
+            get_organization_by_id, get_organization_by_phone, get_organizations, save_organization,
+        },
+        models::model::{
+            AddOrganizationDto, AddOrganizationModel, CreatedResponseModel, UploadImgModel,
+        },
     },
     libs::{error, validator},
     utils::{
-        models::{HttpClientResponse, SaveMemberOrgDto},
-        shared::save_member_from_org,
+        file_methods::save_file,
+        models::{HttpClientResponse, SaveMediaDto, SaveMemberOrgDto},
+        shared::{save_media_meta, save_member_from_org},
     },
     AppState,
 };
@@ -41,7 +47,7 @@ pub async fn add_organization(
         "Date Joined",
     )?;
 
-    if let Ok(Some(_)) = get_organization_by_phone(&mobile, &state).await {
+    if let Ok(_) = get_organization_by_phone(&mobile, &state).await {
         return Ok(HttpResponse::Forbidden().json(HttpClientResponse {
             code: 2001,
             status: false,
@@ -98,7 +104,10 @@ pub async fn add_organization(
     }
 }
 
-pub async fn get_all(_req: HttpRequest, state: web::Data<AppState>) -> Result<HttpResponse, error::Error> {
+pub async fn get_all(
+    _req: HttpRequest,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
     let organizations = get_organizations(&state).await;
 
     match organizations {
@@ -117,4 +126,73 @@ pub async fn get_all(_req: HttpRequest, state: web::Data<AppState>) -> Result<Ht
             }),
         ),
     }
+}
+
+pub async fn upload_img(
+    _req: HttpRequest,
+    data: web::Json<UploadImgModel>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
+    let id = validator::uuid(&data.id, "ID")?;
+
+    let data = match general_purpose::STANDARD.decode(&data.data) {
+        Ok(data) => data,
+        Err(e) => {
+            return Ok(HttpResponse::BadRequest().json(HttpClientResponse {
+                code: 2001,
+                status: true,
+                message: format!("Invalid Image with Error: {}", e),
+                data: json!({}),
+            }))
+        }
+    };
+
+    let organization = get_organization_by_id(id, &state).await;
+
+    if let Err(e) = organization {
+        return Err(error::Error::from_db_err(e));
+    };
+
+    let owner = organization.unwrap().id;
+
+    let media = SaveMediaDto {
+        file_path: "uploads/".to_string(),
+        mime_type: "image/png".to_string(),
+        file_size: 0,
+        file_name: format!("{}-{}", owner, uuid::Uuid::new_v4()),
+        media_type: "image".to_string(),
+        width: Some(0),
+        height: Some(0),
+        duration: Some(0),
+    };
+
+    let mime_type = media.mime_type.clone();
+    let media_file_name = media.file_name.clone();
+
+    let result = save_media_meta(owner, media, &state).await;
+
+    if let Err(e) = result {
+        return Err(error::Error::from_db_err(e));
+    };
+
+    let file_name = format!("{}-{}", result.unwrap().last_insert_id, media_file_name);
+    let ext = mime_type.split('/').nth(1).unwrap();
+
+    if let Err(err) = save_file(&file_name, &ext, &data).await {
+        return Ok(
+            HttpResponse::InternalServerError().json(HttpClientResponse {
+                code: 2001,
+                status: true,
+                message: format!("Error Saving File: {}", err),
+                data: json!({}),
+            }),
+        );
+    };
+
+    Ok(HttpResponse::Ok().json(HttpClientResponse {
+        code: 2000,
+        status: true,
+        message: "Image Uploaded Successfully".to_string(),
+        data: json!({}),
+    }))
 }
