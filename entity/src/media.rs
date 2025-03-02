@@ -16,6 +16,7 @@ pub struct Model {
     pub width: Option<i32>,
     pub height: Option<i32>,
     pub duration: Option<i32>,
+    pub is_deleted: bool,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

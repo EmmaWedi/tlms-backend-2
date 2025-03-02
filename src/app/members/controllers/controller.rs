@@ -29,6 +29,14 @@ pub async fn add_member(
             .unwrap_or(""),
         "Date Joined",
     )?;
+    let date_of_birth = validator::date(
+        payload
+            .date_joined
+            .map(|d| d.to_string())
+            .as_deref()
+            .unwrap_or(""),
+        "Date of Birth",
+    )?;
 
     let claims = req.extensions().get::<Arc<Claims>>().cloned();
 
@@ -61,7 +69,8 @@ pub async fn add_member(
         organization_id,
         gender,
         address,
-        date_joined: Some(date_joined)
+        date_joined: Some(date_joined),
+        date_of_birth: Some(date_of_birth)
     };
 
     let result = save_member(member, &state).await;

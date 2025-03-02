@@ -46,6 +46,14 @@ pub async fn add_organization(
             .unwrap_or(""),
         "Date Joined",
     )?;
+    let date_of_birth = validator::date(
+        payload
+            .date_of_birth
+            .map(|d| d.to_string())
+            .as_deref()
+            .unwrap_or(""),
+        "Date of Birth",
+    )?;
 
     if let Ok(_) = get_organization_by_phone(&mobile, &state).await {
         return Ok(HttpResponse::Forbidden().json(HttpClientResponse {
@@ -75,6 +83,7 @@ pub async fn add_organization(
                 address: member_address,
                 gender,
                 date_joined: Some(date_joined),
+                date_of_birth: Some(date_of_birth),
             };
 
             let save_member = save_member_from_org(res.last_insert_id, data, &state).await;

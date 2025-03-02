@@ -13,6 +13,7 @@ pub struct AddOrganizationModel {
     pub member_address: String,
     pub gender: String,
     pub date_joined: Option<chrono::NaiveDate>,
+    pub date_of_birth: Option<chrono::NaiveDate>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

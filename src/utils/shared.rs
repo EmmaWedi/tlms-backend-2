@@ -36,6 +36,7 @@ pub async fn save_member_from_org(
         organization_id: Set(id),
         gender: Set(data.gender),
         date_joined: Set(data.date_joined),
+        date_of_birth: Set(data.date_of_birth.unwrap_or_default()),
         ..Default::default()
     };
 
@@ -95,7 +96,7 @@ pub async fn get_media_by_id(
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(media.unwrap())
+    media
 }
 
 //get media by user

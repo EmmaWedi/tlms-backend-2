@@ -65,7 +65,7 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Members::DateJoined)
                             .date()
-                            .check(Expr::col(Members::DateOfBirth).lte(Expr::cust("CURRENT_DATE"))),
+                            .check(Expr::col(Members::DateJoined).lte(Expr::cust("CURRENT_DATE"))),
                     )
                     .col(
                         ColumnDef::new(Members::Department)
@@ -105,7 +105,7 @@ impl MigrationTrait for Migration {
                             ]))
                             .default(SubDepartmentEnum::NotSelected.as_str()),
                     )
-                    .col(ColumnDef::new(Members::AddedBy).uuid().not_null())
+                    .col(ColumnDef::new(Members::AddedBy).uuid())
                     .col(ColumnDef::new(Members::Alias).string())
                     .col(
                         ColumnDef::new(Members::MemberType)

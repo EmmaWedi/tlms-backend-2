@@ -9,6 +9,7 @@ pub struct AddMemberModel {
     pub address: String,
     pub gender: String,
     pub date_joined: Option<chrono::NaiveDate>,
+    pub date_of_birth: Option<chrono::NaiveDate>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -21,6 +22,7 @@ pub struct AddMemberDto {
     pub address: String,
     pub gender: String,
     pub date_joined: Option<chrono::NaiveDate>,
+    pub date_of_birth: Option<chrono::NaiveDate>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

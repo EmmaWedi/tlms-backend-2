@@ -22,6 +22,7 @@ pub async fn save_member(
         gender: Set(data.gender),
         organization_id: Set(data.organization_id),
         date_joined: Set(data.date_joined),
+        date_of_birth: Set(data.date_of_birth.unwrap_or_default()),
         ..Default::default()
     };
 
@@ -59,7 +60,7 @@ pub async fn get_member_by_id(
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(member.unwrap())
+    member
 }
 
 pub async fn get_member_by_phone(
@@ -76,7 +77,7 @@ pub async fn get_member_by_phone(
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(member.unwrap())
+    member
 }
 
 pub async fn toggle_member_blocked(

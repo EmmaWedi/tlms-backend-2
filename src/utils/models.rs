@@ -19,6 +19,7 @@ pub struct SaveMemberOrgDto {
     pub address: String,
     pub gender: String,
     pub date_joined: Option<chrono::NaiveDate>,
+    pub date_of_birth: Option<chrono::NaiveDate>,
 }
 
 pub struct SaveMediaDto {

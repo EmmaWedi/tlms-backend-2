@@ -9,6 +9,7 @@ pub struct Model {
     pub id: Uuid,
     pub email: Option<String>,
     pub member_id: Uuid,
+    pub session_id: Option<Uuid>,
     #[sea_orm(unique)]
     pub contact: String,
     pub password: String,

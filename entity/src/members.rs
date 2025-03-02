@@ -20,7 +20,7 @@ pub struct Model {
     pub department: String,
     pub aux_department: String,
     pub sub_department: String,
-    pub added_by: Uuid,
+    pub added_by: Option<Uuid>,
     pub alias: Option<String>,
     pub member_type: String,
     pub is_blocked: bool,

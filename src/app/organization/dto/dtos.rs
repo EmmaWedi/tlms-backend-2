@@ -56,7 +56,7 @@ pub async fn get_organization_by_id(
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(organization.unwrap())
+    organization
 }
 
 pub async fn get_organization_by_email(
@@ -73,7 +73,7 @@ pub async fn get_organization_by_email(
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(organization.unwrap())
+    organization
 }
 
 pub async fn get_organization_by_phone(
@@ -90,7 +90,7 @@ pub async fn get_organization_by_phone(
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
 
-    Ok(organization.unwrap())
+    organization
 }
 
 pub async fn update_organization(
