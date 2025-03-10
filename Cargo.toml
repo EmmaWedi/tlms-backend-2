@@ -37,9 +37,12 @@ tokio = { version = "1", features = ["full"] }
 
 
 [profile.release]
-debug = false
-lto = "fat"
-codegen-units = 1
-split-debuginfo = "off"
-panic = "abort"
-
+codegen-units = 1        # Ensures maximum optimization at the cost of slower compile times
+lto = "fat"              # Enables full Link-Time Optimization for better performance
+strip = "symbols"        # Strips debug symbols, reducing binary size while keeping backtrace info
+panic = "abort"          # Disables stack unwinding on panic, reducing binary size
+opt-level = 3           # Maximum optimizations for speed
+debug = false           # No debug symbols to reduce binary size
+overflow-checks = false # Disable integer overflow checks (unsafe but faster)
+incremental = false     # Disable incremental compilation for consistent optimizations
+rpath = false           # Exclude runtime path information
