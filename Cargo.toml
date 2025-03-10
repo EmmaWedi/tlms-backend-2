@@ -46,3 +46,16 @@ debug = false           # No debug symbols to reduce binary size
 overflow-checks = false # Disable integer overflow checks (unsafe but faster)
 incremental = false     # Disable incremental compilation for consistent optimizations
 rpath = false           # Exclude runtime path information
+
+[profile.dev]
+opt-level = 1          # Slightly optimize for runtime performance without slowing down compilation
+debug = true           # Include full debug symbols for better stack traces
+debug-assertions = true # Enable extra runtime checks (e.g., bounds checks)
+overflow-checks = true  # Keep integer overflow checks enabled
+lto = "off"            # Disable Link-Time Optimization for faster rebuilds
+incremental = true     # Enable incremental compilation to speed up recompilation
+codegen-units = 256    # Increase parallelism for fast compilation
+strip = "none"         # Keep debugging symbols for better debugging experience
+panic = "unwind"       # Enable unwinding for better debugging (useful for catching panics)
+rpath = false          # Avoid embedding runtime path information
+
