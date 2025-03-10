@@ -35,3 +35,11 @@ sha2 = "0.10.8"
 uuid = { version = "1.13.1", features = ["v4", "fast-rng", "macro-diagnostics"] }
 tokio = { version = "1", features = ["full"] }
 
+
+[profile.release]
+debug = false
+lto = "fat"
+codegen-units = 1
+split-debuginfo = "off"
+panic = "abort"
+
